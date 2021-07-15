@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./default.conf.template:/etc/nginx/templates/default.conf.template
+    environment:
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+    networks:
+      - front
+      - backend
+    restart: always
+
+  teamcity:
+    image: jetbrains/teamcity-server
+    volumes:
+      - ./teamcity/data:/data/teamcity_server/datadir
+      - ./teamcity/logs:/opt/teamcity/logs
+#    ports:
+#      - 8111:8111
+    networks:
+      - backend
+      - databases
+    restart: always
+
+  teamcity-agent:
+    image: jetbrains/teamcity-agent
+#    volumes:
+#      - ./agent-conf:/data/teamcity_agent/conf
+    environment:
+      - SERVER_URL=teamcity:8111
+    networks:
+      - backend
+    restart: always
+
+networks:
+  front:
+    external:
+      name: front
+  databases:
+    external:
+      name: databases
+  backend:
