@@ -25,9 +25,16 @@ services:
     restart: always
 
   teamcity-agent:
+    user: root:root
     image: jetbrains/teamcity-agent
-#    volumes:
-#      - ./agent-conf:/data/teamcity_agent/conf
+    volumes:
+      - ./agent/conf:/data/teamcity_agent/conf
+      - /opt/buildagent/work:/opt/buildagent/work
+      - /opt/buildagent/temp:/opt/buildagent/temp
+      - /opt/buildagent/tools:/opt/buildagent/tools
+      - /opt/buildagent/plugins:/opt/buildagent/plugins
+      - /opt/buildagent/system:/opt/buildagent/system
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - SERVER_URL=teamcity:8111
     networks:
